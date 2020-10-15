@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
- * @author yq
+ * @author yuerfeifei
  * @title: ResultPrint
  * @date 2020/10/15
  */
@@ -14,6 +14,7 @@ public class ResultPrintService {
     private ContentService contentService;
 
     public void resultPrint(){
-        contentService.countBuilder();
+//        contentService.countPrint();
+        contentService.keyWordRankingPrint();
     }
 }

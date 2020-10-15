@@ -59,30 +59,14 @@
     imgPath, reserved, lvbuffer, transContent, transBrandWording, talkerId, bizClientMsgId, 
     bizChatId, bizChatUserId, msgSeq, flag, solitaireFoldInfo
   </sql>
-  <select id="selectByExample" parameterType="com.yq.wechatcontent.model.entity.Message" resultMap="BaseResultMap">
+  <select id="getAll" resultMap="BaseResultMap">
     select
-    <if test="distinct">
-      distinct
-    </if>
-    <include refid="Base_Column_List" />
-    from message
-    <if test="_parameter != null">
-      <include refid="Where_Clause" />
-    </if>
-    <if test="orderByClause != null">
-      order by ${orderByClause}
-    </if>
+    <include refid="Base_Column_List"/>
+    from message where isSend=#{isSender} and talker=#{talker} order by createtime ;
   </select>
 
   <select id="getCountBySender" resultType="java.lang.Long">
     select count(*) from message where isSend=#{isSender} and talker=#{talker};
   </select>
 
-
-  <select id="countByExample" parameterType="com.yq.wechatcontent.model.entity.Message" resultType="java.lang.Long">
-    select count(*) from message
-    <if test="_parameter != null">
-      <include refid="Where_Clause" />
-    </if>
-  </select>
 </mapper>

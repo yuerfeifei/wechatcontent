@@ -1,13 +1,24 @@
 package com.yq.wechatcontent.service;
 
+import com.huaban.analysis.jieba.JiebaSegmenter;
+import com.huaban.analysis.jieba.WordDictionary;
+import com.yq.wechatcontent.model.entity.Message;
 import com.yq.wechatcontent.model.mapper.MessageMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.nio.file.Paths;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+
 import static com.yq.wechatcontent.utils.Constant.*;
+import static java.util.regex.Pattern.compile;
 
 /**
- * @author yq
- * @title: ContentHandleBuilder
+ * @author yuerfeifei
+ * @title: ContentService
  * @date 2020/10/15
  */
 @Service
@@ -17,7 +28,7 @@ public class ContentService extends BaseService{
     private MessageMapper messageMapper;
 
     @Override
-    void countBuilder() {
+    void countPrint() {
         //查询自己发送的条数
         long senderCount = messageMapper.getCountBySender(IS_SENDER, TALKER);
 
@@ -29,6 +40,58 @@ public class ContentService extends BaseService{
     }
 
     @Override
-    void keyWordRankingBuilder() {
+    void keyWordRankingPrint() {
+        //发送者排名
+        LinkedHashMap<String, Integer> senderRank = getRank(IS_SENDER, TALKER);
+
+        //接收者排名
+        LinkedHashMap<String, Integer> receiverRank = getRank(NOT_SENDER, TALKER);
+        System.out.println();
+    }
+
+    private LinkedHashMap<String, Integer> getRank(int isSender, String talker) {
+        List<Message> all = messageMapper.getAll(isSender, talker);
+        StringBuilder sb = new StringBuilder();
+        //把所有内容都放到一个字符串
+        all.forEach(x -> {
+            sb.append(x.getContent());
+        });
+        JiebaSegmenter segmenter = new JiebaSegmenter();
+        WordDictionary.getInstance().init(Paths.get("src/main/resources"));
+        List<String> list = segmenter.sentenceProcess(sb.toString());
+        /*List<String> list = new ArrayList<>();
+        IKSegmenter ik = new IKSegmenter(new StringReader(sb.toString()), false);
+        try {
+            Lexeme word = null;
+            while ((word = ik.next()) != null) {
+                list.add(word.getLexemeText());
+//                result.append(word.getLexemeText()).append(" ");
+            }
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
+        }*/
+
+
+        Map<String, Integer> result = new HashMap<>(1000);
+        Pattern p = compile("[\u4e00-\u9fa5]");
+        list.forEach(x -> {
+            //过滤非汉字
+            Matcher m = p.matcher(x);
+            if (!m.find()) {
+                return;
+            }
+
+            if (x.length() < 2) {
+                return;
+            }
+            if (result.containsKey(x)) {
+                Integer count = result.get(x) + 1;
+                result.put(x, count);
+            } else {
+                result.put(x, 1);
+            }
+        });
+        LinkedHashMap<String, Integer> collect = result.entrySet().stream().sorted(Map.Entry.comparingByValue(Comparator.reverseOrder())).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (oldValue, newValue) -> oldValue, LinkedHashMap::new));
+        return collect;
     }
 }

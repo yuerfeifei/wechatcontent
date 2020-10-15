@@ -1,7 +1,10 @@
 package com.yq.wechatcontent.model.mapper;
 
+import com.yq.wechatcontent.model.entity.Message;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 /**
  * message表对应mapper
@@ -18,4 +21,11 @@ public interface MessageMapper extends BaseMapper {
      * @return
      */
     long getCountBySender(@Param("isSender") int isSender,@Param("talker") String talker);
+
+    /**
+     * 根据发送者和对话者获取数据库所有数据
+     *
+     * @return
+     */
+    List<Message> getAll(@Param("isSender") int isSender, @Param("talker") String talker);
 }

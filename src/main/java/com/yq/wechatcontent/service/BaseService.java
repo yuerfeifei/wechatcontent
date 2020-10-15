@@ -12,11 +12,11 @@ public abstract class BaseService {
      * 统计对话次数
      * @return
      */
-    abstract void countBuilder();
+    abstract void countPrint();
 
     /**
      * 筛选频率最高的关键字
      * @return
      */
-    abstract void keyWordRankingBuilder();
+    abstract void keyWordRankingPrint();
 }
