@@ -1,0 +1,21 @@
+# Tomcat
+server:
+  tomcat:
+    uri-encoding: UTF-8
+  port: 8080
+spring:
+  datasource:
+    driver-class-name: org.sqlite.JDBC
+    url: jdbc:sqlite:C:/Users/Administrator/Desktop/sql/test.db
+    username:
+    password:
+
+mybatis:
+  mapper-locations: classpath:mapping/*Mapper.xml
+  type-aliases-package: com.yq.wechatcontent.model.entity
+# sql打印
+logging:
+  level: debug
+  level.com.xuanyin: debug
+  file:
+    path: logs/
