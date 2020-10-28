@@ -102,10 +102,9 @@ public class Message {
         return createtime;
     }
 
-    public void setCreatetime(LocalDateTime createtime) {
+    public void setCreatetime(Long createtime) {
 
-        this.createtime = new Date(1602568913000L).toInstant().atOffset(ZoneOffset.of("+8")).toLocalDateTime();
-        ;
+        this.createtime = new Date(createtime).toInstant().atOffset(ZoneOffset.of("+8")).toLocalDateTime();
     }
 
     public String getTalker() {

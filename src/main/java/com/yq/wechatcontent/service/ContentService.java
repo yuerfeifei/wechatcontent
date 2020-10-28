@@ -59,7 +59,7 @@ public class ContentService implements BaseService {
     @Override
     public void hourRankingPrint() {
         List<Message> messageList = messageMapper.getAll(IS_SENDER, TALKER);
-        Map<Integer, Integer> result = new TreeMap<>();
+        Map<Integer, Integer> result = new HashMap<>();
         messageList.forEach(x -> {
             int hour = x.getCreatetime().getHour();
             if (result.containsKey(hour)) {
@@ -69,7 +69,8 @@ public class ContentService implements BaseService {
                 result.put(hour, 1);
             }
         });
-        System.out.println(result);
+        LinkedHashMap<Integer, Integer> collect = result.entrySet().stream().sorted(Map.Entry.comparingByValue(Comparator.reverseOrder())).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (oldValue, newValue) -> oldValue, LinkedHashMap::new));
+        System.out.println(collect);
     }
 
     private LinkedHashMap<String, Integer> getRank(int isSender, String talker) {
