@@ -5,18 +5,20 @@ package com.yq.wechatcontent.service;
  * @title: ContentAnalyseBuilder
  * @date 2020/10/15
  */
-public abstract class BaseService {
+public interface BaseService {
 
 
     /**
      * 统计对话次数
      * @return
      */
-    abstract void countPrint();
+    void countPrint();
 
     /**
      * 筛选频率最高的关键字
      * @return
      */
-    abstract void keyWordRankingPrint();
+    void keyWordRankingPrint();
+
+    void hourRankingPrint();
 }

@@ -2,6 +2,10 @@ package com.yq.wechatcontent.model.entity;
 
 import org.apache.ibatis.type.Alias;
 
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.util.Date;
+
 @Alias("message")
 public class Message {
     private Integer msgid;
@@ -16,7 +20,7 @@ public class Message {
 
     private Integer isshowtimer;
 
-    private Integer createtime;
+    private LocalDateTime createtime;
 
     private String talker;
 
@@ -94,12 +98,14 @@ public class Message {
         this.isshowtimer = isshowtimer;
     }
 
-    public Integer getCreatetime() {
+    public LocalDateTime getCreatetime() {
         return createtime;
     }
 
-    public void setCreatetime(Integer createtime) {
-        this.createtime = createtime;
+    public void setCreatetime(LocalDateTime createtime) {
+
+        this.createtime = new Date(1602568913000L).toInstant().atOffset(ZoneOffset.of("+8")).toLocalDateTime();
+        ;
     }
 
     public String getTalker() {

@@ -15,6 +15,7 @@ public class ResultPrintService {
 
     public void resultPrint(){
 //        contentService.countPrint();
-        contentService.keyWordRankingPrint();
+//        contentService.keyWordRankingPrint();
+        contentService.hourRankingPrint();
     }
 }

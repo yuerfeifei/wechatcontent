@@ -1,5 +1,7 @@
 package com.yq.wechatcontent.service;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.huaban.analysis.jieba.JiebaSegmenter;
 import com.huaban.analysis.jieba.WordDictionary;
 import com.yq.wechatcontent.model.entity.Message;
@@ -22,13 +24,13 @@ import static java.util.regex.Pattern.compile;
  * @date 2020/10/15
  */
 @Service
-public class ContentService extends BaseService{
+public class ContentService implements BaseService {
 
     @Autowired
     private MessageMapper messageMapper;
 
     @Override
-    void countPrint() {
+    public void countPrint() {
         //查询自己发送的条数
         long senderCount = messageMapper.getCountBySender(IS_SENDER, TALKER);
 
@@ -40,13 +42,34 @@ public class ContentService extends BaseService{
     }
 
     @Override
-    void keyWordRankingPrint() {
+    public void keyWordRankingPrint() {
         //发送者排名
         LinkedHashMap<String, Integer> senderRank = getRank(IS_SENDER, TALKER);
 
         //接收者排名
         LinkedHashMap<String, Integer> receiverRank = getRank(NOT_SENDER, TALKER);
-        System.out.println();
+
+        String senderRankString = JSONArray.toJSONString(senderRank);
+
+        String receiverRankString = JSONObject.toJSONString(receiverRank);
+        System.out.println(senderRankString);
+//        System.out.println(receiverRankString);
+    }
+
+    @Override
+    public void hourRankingPrint() {
+        List<Message> messageList = messageMapper.getAll(IS_SENDER, TALKER);
+        Map<Integer, Integer> result = new TreeMap<>();
+        messageList.forEach(x -> {
+            int hour = x.getCreatetime().getHour();
+            if (result.containsKey(hour)) {
+                Integer count = result.get(hour) + 1;
+                result.put(hour, count);
+            } else {
+                result.put(hour, 1);
+            }
+        });
+        System.out.println(result);
     }
 
     private LinkedHashMap<String, Integer> getRank(int isSender, String talker) {
@@ -59,18 +82,6 @@ public class ContentService extends BaseService{
         JiebaSegmenter segmenter = new JiebaSegmenter();
         WordDictionary.getInstance().init(Paths.get("src/main/resources"));
         List<String> list = segmenter.sentenceProcess(sb.toString());
-        /*List<String> list = new ArrayList<>();
-        IKSegmenter ik = new IKSegmenter(new StringReader(sb.toString()), false);
-        try {
-            Lexeme word = null;
-            while ((word = ik.next()) != null) {
-                list.add(word.getLexemeText());
-//                result.append(word.getLexemeText()).append(" ");
-            }
-        } catch (IOException ex) {
-            throw new RuntimeException(ex);
-        }*/
-
 
         Map<String, Integer> result = new HashMap<>(1000);
         Pattern p = compile("[\u4e00-\u9fa5]");
